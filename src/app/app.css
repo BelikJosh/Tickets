@@ -1,0 +1,24 @@
+.main-container {
+  min-height: calc(100vh - 80px);
+}
+
+.footer {
+  background: var(--dark-color);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  margin-top: auto;
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+}
+
+/* Asegurar que el contenido principal ocupe el espacio disponible */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}

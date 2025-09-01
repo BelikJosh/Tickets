@@ -1,0 +1,32 @@
+<div class="photo-upload-container">
+  <div class="photo-preview">
+    <img [src]="getPhotoUrl()" 
+         [alt]="userName" 
+         class="user-photo"
+         [class.loading]="isUploading">
+    
+    <div *ngIf="isUploading" class="upload-overlay">
+      <div class="spinner"></div>
+      <span>Subiendo...</span>
+    </div>
+  </div>
+
+  <div class="upload-controls">
+    <label for="photo-upload" class="upload-btn">
+      <input type="file" 
+             id="photo-upload" 
+             accept="image/*" 
+             (change)="onFileSelected($event)"
+             style="display: none;">
+      📸 Cambiar Foto
+    </label>
+    
+    <div *ngIf="errorMessage" class="error-message">
+      {{errorMessage}}
+    </div>
+    
+    <small class="upload-hint">
+      Formatos: JPG, PNG, GIF • Máx. 2MB
+    </small>
+  </div>
+</div>

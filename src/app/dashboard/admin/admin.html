@@ -1,0 +1,137 @@
+<div class="admin-dashboard-container">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>🛠️ AdminIT</h1>
+      <p>Panel Administrativo</p>
+    </div>
+
+    <!-- Datos del Admin -->
+    <div class="user-info">
+      <div class="user-avatar">
+        <app-photo-upload
+          [currentPhotoUrl]="currentAdmin.fotoUrl"
+          [userName]="currentAdmin.nombre"
+          [userId]="currentAdmin.id"
+          [token]="authService.getToken()"
+          (photoUploaded)="onPhotoUploaded($event)">
+        </app-photo-upload>
+        <div class="user-name">{{currentAdmin.nombre}}</div>
+        <div class="user-role">Administrador</div>  
+      </div>
+    </div>
+
+    <!-- Navegación rápida -->
+    <nav class="sidebar-nav">
+      <a class="nav-item" [class.active]="currentTab === 'todos'" (click)="filterTab('todos')">
+        <span class="nav-icon">📋</span> Todos los empleados
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'empleados'" (click)="filterTab('empleados')">
+        <span class="nav-icon">👥</span> Empleados
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'it'" (click)="filterTab('it')">
+        <span class="nav-icon">💻</span> Técnicos IT
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'admin'" (click)="filterTab('admin')">
+        <span class="nav-icon">🛡️</span> Administradores
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'reportes'" (click)="filterTab('reportes')">
+        <span class="nav-icon">📊</span> Reportes
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <header class="dashboard-header">
+      <h1>Panel Administrativo</h1>
+      <p>Gestión de usuarios, IT y reportes</p>
+    </header>
+
+    <!-- Estadísticas rápidas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">📋</div>
+          <div class="stat-info">
+            <div class="stat-number">{{usuarios.length}}</div>
+            <div class="stat-label">Todos los empleados</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">👥</div>
+          <div class="stat-info">
+            <div class="stat-number">{{cantidadEmpleados}}</div>
+            <div class="stat-label">Empleados</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">💻</div>
+          <div class="stat-info">
+            <div class="stat-number">{{cantidadIT}}</div>
+            <div class="stat-label">Técnicos IT</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">🛡️</div>
+          <div class="stat-info">
+            <div class="stat-number">{{cantidadAdmin}}</div>
+            <div class="stat-label">Administradores</div>
+          </div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-number">{{reportesGenerados.length}}</div>
+            <div class="stat-label">Reportes Generados</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs de Usuarios -->
+    <section *ngIf="currentTab !== 'reportes'" class="user-management">
+      <h2>👥 Gestión de Usuarios</h2>
+      <div class="tabs">
+        <button [class.active]="currentTab === 'todos'" (click)="filterTab('todos')">Todos</button>
+        <button [class.active]="currentTab === 'empleados'" (click)="filterTab('empleados')">Empleados</button>
+        <button [class.active]="currentTab === 'it'" (click)="filterTab('it')">Técnicos IT</button>
+        <button [class.active]="currentTab === 'admin'" (click)="filterTab('admin')">Administradores</button>
+      </div>
+      <div class="user-table">
+        <div class="table-header">
+          <span>ID</span>
+          <span>Nombre</span>
+          <span>Email</span>
+          <span>Rol</span>
+          <span>Acciones</span>
+        </div>
+
+        <div *ngFor="let user of filteredUsers" class="table-row">
+          <span>{{user.id}}</span>
+          <span>{{user.nombre}}</span>
+          <span>{{user.email}}</span>
+          <span>{{user.rol_nombre}}</span>
+          <span class="actions">
+            <button (click)="editarUsuario(user)" class="btn btn-info btn-sm">✏️ Editar</button>
+            <button (click)="eliminarUsuario(user)" class="btn btn-danger btn-sm">🗑️ Eliminar</button>
+          </span>
+        </div>
+
+        <div *ngIf="filteredUsers.length === 0" class="no-users">
+          📭 No hay usuarios en esta categoría
+        </div>
+      </div>
+    </section>
+  </main>
+
+</div>

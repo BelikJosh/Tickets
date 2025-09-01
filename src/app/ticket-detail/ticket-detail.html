@@ -1,0 +1,72 @@
+<div class="ticket-detail-container">
+  <div *ngIf="isLoading" class="loading">Cargando ticket...</div>
+  
+  <div *ngIf="!isLoading && ticket" class="ticket-detail">
+    <div class="ticket-header">
+      <h1>Ticket #{{ticket.id}}</h1>
+      <div class="ticket-meta">
+        <span class="ticket-status" [class]="getStatusClass(ticket.estado)">
+          {{ticket.estado | titlecase}}
+        </span>
+        <span class="ticket-priority" [class]="getPriorityClass(ticket.prioridad)">
+          {{ticket.prioridad | titlecase}}
+        </span>
+      </div>
+    </div>
+
+    <div class="ticket-content">
+      <div class="ticket-info">
+        <h2>{{ticket.titulo}}</h2>
+        <p class="ticket-description">{{ticket.descripcion}}</p>
+        
+        <div class="ticket-details">
+          <div class="detail-item">
+            <strong>Solicitante:</strong> {{ticket.solicitante_nombre}}
+          </div>
+          <div class="detail-item">
+            <strong>Asignado a:</strong> {{ticket.asignado_nombre || 'Sin asignar'}}
+          </div>
+          <div class="detail-item">
+            <strong>Creación:</strong> {{ticket.creado_en | date:'medium'}}
+          </div>
+          <div class="detail-item" *ngIf="ticket.actualizado_en">
+            <strong>Última actualización:</strong> {{ticket.actualizado_en | date:'medium'}}
+          </div>
+        </div>
+      </div>
+
+      <div class="comments-section">
+        <h3>Comentarios ({{comments.length}})</h3>
+        
+        <div class="comment-form">
+          <textarea 
+            [(ngModel)]="newComment" 
+            placeholder="Escribe un comentario..."
+            rows="3">
+          </textarea>
+          <button (click)="addComment()" [disabled]="!newComment.trim()">
+            Agregar Comentario
+          </button>
+        </div>
+
+        <div class="comments-list">
+          <div *ngFor="let comment of comments" class="comment-item">
+            <div class="comment-header">
+              <strong>{{comment.usuario_nombre}}</strong>
+              <span class="comment-date">{{comment.creado_en | date:'short'}}</span>
+            </div>
+            <p class="comment-text">{{comment.comentario}}</p>
+          </div>
+
+          <div *ngIf="comments.length === 0" class="no-comments">
+            No hay comentarios aún. Sé el primero en comentar
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !ticket" class="error">
+    No se pudo cargar el ticket solicitado.
+  </div>
+</div>

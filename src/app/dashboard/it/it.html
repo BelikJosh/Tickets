@@ -1,0 +1,282 @@
+<div class="dashboard-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h1>🎯 TicketIT</h1>
+      <p>Sistema de Gestión IT</p>
+    </div>
+
+    <div class="user-info">
+ 
+  <div class="user-role">Técnico IT</div>
+  <!-- Botón para subir foto -->
+  <app-photo-upload
+    [currentPhotoUrl]="currentUser.fotoUrl"
+    [userName]="currentUser.nombre"
+    [userId]="currentUser.id"
+    [token]="authService.getToken()"
+    (photoUploaded)="onPhotoUploaded($event)">
+  </app-photo-upload>
+   <div class="user-info">
+    <h2>{{currentUser.nombre}}</h2>
+    <p>{{currentUser.email}}</p>
+    <span class="user-role">{{currentUser.rol_nombre}}</span>
+  </div>
+</div>
+
+    <nav class="sidebar-nav">
+      <a class="nav-item" [class.active]="currentTab === 'todos'" (click)="filterTickets('todos')">
+        <span class="nav-icon">📋</span>
+        Todos los Tickets
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'pendientes'" (click)="filterTickets('pendientes')">
+        <span class="nav-icon">⏳</span>
+        Pendientes
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'proceso'" (click)="filterTickets('proceso')">
+        <span class="nav-icon">🔧</span>
+        Mis En Proceso
+      </a>
+      <a class="nav-item" [class.active]="currentTab === 'resueltos'" (click)="filterTickets('resueltos')">
+        <span class="nav-icon">✅</span>
+        Mis Resueltos
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+    <header class="dashboard-header">
+      <h1>Panel de Control IT</h1>
+      <p>Gestión eficiente de tickets y soporte técnico</p>
+    </header>
+<!-- Contenedor principal con asistente y estadísticas -->
+    <div class="main-dashboard-content">
+      <!-- Asistente Virtual IT con estilo de programador -->
+      <div class="it-assistant-programmer">
+        <div class="assistant-container">
+          <div class="programmer-avatar" (click)="toggleAssistant()">
+            <div class="programmer-head">
+              <div class="programmer-glasses">
+                <div class="glass left-glass">
+                  <div class="lens"></div>
+                </div>
+                <div class="glass-bridge"></div>
+                <div class="glass right-glass">
+                  <div class="lens"></div>
+                </div>
+              </div>
+              <div class="programmer-eye left-eye"></div>
+              <div class="programmer-eye right-eye"></div>
+              <div class="programmer-mouth"></div>
+            </div>
+            <div class="programmer-body">
+              <div class="programmer-shirt">
+                <div class="shirt-collar left-collar"></div>
+                <div class="shirt-collar right-collar"></div>
+                <div class="pocket"></div>
+              </div>
+            </div>
+            <div class="laptop">
+              <div class="laptop-screen">
+                <div class="screen-content">
+                  <div class="code-line"></div>
+                  <div class="code-line short"></div>
+                  <div class="code-line"></div>
+                </div>
+              </div>
+              <div class="laptop-keyboard"></div>
+            </div>
+          </div>
+          
+          <div class="assistant-message" [class.hidden]="!assistantActive">
+            <div class="message-bubble">
+              <div class="message-header">
+                <span>Asistente IT</span>
+                <button class="close-btn" (click)="toggleAssistant()">×</button>
+              </div>
+              <p>¡Hola <strong>{{currentUser.nombre}}</strong>! 👨‍💻</p>
+              <p>Tu dashboard muestra <strong>{{getMyStats().total}}</strong> tickets en total, con <strong>{{getMyStats().pendientes}}</strong> pendientes.</p>
+              <p>¿En qué puedo ayudarte hoy?</p>
+              
+              <div class="assistant-options">
+                <button (click)="assistantAction('stats')" class="assistant-btn">
+                  <span>📊</span> Mis estadísticas
+                </button>
+                <button (click)="assistantAction('priority')" class="assistant-btn">
+                  <span>🚨</span> Tickets prioritarios
+                </button>
+                <button (click)="assistantAction('help')" class="assistant-btn">
+                  <span>❓</span> Ayuda
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <!-- Estadísticas -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-number">{{getMyStats().total}}</div>
+            <div class="stat-label">Total Tickets</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-info">
+            <div class="stat-number">{{getMyStats().pendientes}}</div>
+            <div class="stat-label">Pendientes</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">🔧</div>
+          <div class="stat-info">
+            <div class="stat-number">{{getMyStats().enProceso}}</div>
+            <div class="stat-label">En Proceso</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-content">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <div class="stat-number">{{getMyStats().resueltos}}</div>
+            <div class="stat-label">Resueltos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Tickets -->
+    <section class="tabs-section">
+      <div class="tabs-header">
+        <div class="tabs">
+          <button class="tab" [class.active]="currentTab === 'todos'" (click)="filterTickets('todos')">
+            📋 Todos <span class="tab-count">{{todosTickets.length}}</span>
+          </button>
+          <button class="tab" [class.active]="currentTab === 'pendientes'" (click)="filterTickets('pendientes')">
+            ⏳ Pendientes <span class="tab-count">{{getMyStats().pendientes}}</span>
+          </button>
+          <button class="tab" [class.active]="currentTab === 'proceso'" (click)="filterTickets('proceso')">
+            🔧 Mis En Proceso <span class="tab-count">{{getMyStats().enProceso}}</span>
+          </button>
+          <button class="tab" [class.active]="currentTab === 'resueltos'" (click)="filterTickets('resueltos')">
+            ✅ Mis Resueltos <span class="tab-count">{{getMyStats().resueltos}}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="tickets-table">
+        <div class="table-header">
+          <span>ID</span>
+          <span>Título</span>
+          <span>Prioridad</span>
+          <span>Estado</span>
+          <span>Solicitante</span>
+          <span>Asignado a</span>
+          <span>Acciones</span>
+        </div>
+
+        <div *ngFor="let ticket of displayedTickets" class="table-row">
+          <span>#{{ticket.id}}</span>
+          <span class="ticket-title">{{ticket.titulo}}</span>
+          <span>
+            <span class="badge" [class]="getPriorityClass(ticket.prioridad)">
+              {{ticket.prioridad | titlecase}}
+            </span>
+          </span>
+          <span>
+            <span class="badge" [class]="getStatusClass(ticket.estado)">
+              {{ticket.estado | titlecase}}
+            </span>
+          </span>
+          <span>{{ticket.solicitante_nombre}}</span>
+          <span>{{ticket.asignado_id ? getTechnicianName(ticket.asignado_id) : 'Sin asignar'}}</span>
+          <span class="actions">
+            <ng-container *ngIf="ticket.estado === 'nuevo'">
+              <button (click)="takeTicket(ticket.id)" class="btn btn-primary btn-sm">
+                <span>✅</span> Tomar
+              </button>
+              <button (click)="openAssignmentModal(ticket.id)" class="btn btn-secondary btn-sm">
+                <span>👥</span> Asignar
+              </button>
+            </ng-container>
+
+            <ng-container *ngIf="ticket.estado === 'en_proceso' && isMyTicket(ticket)">
+              <button (click)="resolveTicket(ticket.id)" class="btn btn-success btn-sm">
+                <span>✔️</span> Resolver
+              </button>
+            </ng-container>
+
+            <button (click)="verDetalles(ticket.id)" class="btn btn-info btn-sm">
+              <span>👀</span> Ver
+            </button>
+          </span>
+        </div>
+
+        <div *ngIf="displayedTickets.length === 0" class="no-tickets">
+          <ng-container [ngSwitch]="currentTab">
+            <span *ngSwitchCase="'proceso'">🎉 No tienes tickets en proceso</span>
+            <span *ngSwitchCase="'resueltos'">🎉 No tienes tickets resueltos</span>
+            <span *ngSwitchDefault>📭 No hay tickets en esta categoría</span>
+          </ng-container>
+        </div>
+      </div>
+    </section>
+
+    <!-- Acciones Rápidas -->
+    <section class="quick-actions">
+      <h2>⚡ Acciones Rápidas</h2>
+      <div class="actions-grid">
+        <button (click)="generarReporte()" class="action-btn">
+          <span>📊</span> Generar Reporte
+        </button>
+        <button (click)="verMisTickets()" class="action-btn">
+          <span>👤</span> Mis Estadísticas
+        </button>
+        <button (click)="loadTodosTickets()" class="action-btn">
+          <span>🔄</span> Actualizar
+        </button>
+        <button  class="action-btn">
+          <span>🔔</span> Notificaciones
+        </button>
+      </div>
+    </section>
+  
+</div>
+
+<!-- Modal de Asignación -->
+<div *ngIf="showAssignmentModal" class="modal-overlay">
+  <div class="modal">
+    <h3>👥 Asignar Ticket</h3>
+    <p>Selecciona un técnico para asignar este ticket:</p>
+    
+    <select [(ngModel)]="selectedTechnician" class="form-select">
+      <option [value]="null">Seleccionar técnico</option>
+      <option *ngFor="let tech of usuariosIT" [value]="tech.id">
+        {{ tech.nombre }} - {{ tech.email }}
+      </option>
+    </select>
+
+    <div class="modal-actions">
+      <button (click)="assignTicketToTechnician()" 
+              [disabled]="!selectedTechnician"
+              class="btn btn-primary">
+        ✅ Asignar
+      </button>
+      <button (click)="closeAssignmentModal()" class="btn btn-secondary">
+        ❌ Cancelar
+      </button>
+    </div>
+  </div>
+</div>

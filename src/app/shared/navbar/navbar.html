@@ -1,0 +1,16 @@
+<nav class="navbar">
+  <div class="nav-brand">
+    <h2>🎫 Sistema de Tickets</h2>
+  </div>
+  
+  <div class="nav-menu">
+    <span class="user-info">
+      👋 Bienvenido, <strong>{{getUserName()}}</strong> 
+      <span class="user-role">({{getUserRole()}})</span>
+    </span>
+    
+    <button class="logout-btn" (click)="logout()">
+      🚪 Cerrar Sesión
+    </button>
+  </div>
+</nav>
